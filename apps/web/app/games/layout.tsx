@@ -35,6 +35,12 @@ export default function Layout({ children }: { children: ReactNode }) {
     }
   );
 
+  const getUserNFTQuery = api.http.nft.getUserNFTs.useQuery({
+    address: networkStore.address!,
+    page: 0,
+    hitsPerPage: 100,
+  });
+
   const getMinaEventsQuery = api.http.lotteryBackend.getMinaEvents.useQuery({});
 
   const addGiftCodesMutation = api.http.giftCodes.addGiftCodes.useMutation();
@@ -105,6 +111,7 @@ export default function Layout({ children }: { children: ReactNode }) {
             }),
         },
         refetchAccountData: refetchAccountData,
+        userNFT: getUserNFTQuery.data,
         ratings: {
           gameFeedbackMutator: feedback =>
             gameFeedbackMutator.mutate({

@@ -19,6 +19,11 @@ export default function Home() {
   });
   const accountData = accountDataQuery.data;
   const refetchAccountData = accountDataQuery.refetch;
+  const getUserNFTQuery = api.http.nft.getUserNFTs.useQuery({
+    address: networkStore.address!,
+    page: 0,
+    hitsPerPage: 100,
+  });
   const nameMutator = api.http.accounts.setName.useMutation();
   const avatarIdMutator = api.http.accounts.setAvatar.useMutation();
   const gameFeedbackMutator = api.http.ratings.setGameFeedback.useMutation();
@@ -60,6 +65,7 @@ export default function Home() {
               }),
           },
           refetchAccountData: refetchAccountData,
+          userNFT: getUserNFTQuery.data,
           ratings: {
             gameFeedbackMutator: feedback =>
               gameFeedbackMutator.mutate({

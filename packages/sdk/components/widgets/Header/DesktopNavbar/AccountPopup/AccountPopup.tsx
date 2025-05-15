@@ -80,18 +80,8 @@ export default function AccountPopup({
   const networkStore = useNetworkStore();
   const bridgeStore = useBridgeStore();
   const notificationStore = useNotificationStore();
-  const { account, refetchAccountData } = useContext(SetupStoreContext);
+  const { account, refetchAccountData, userNFT } = useContext(SetupStoreContext);
   const router = useRouter();
-  const { data: nfts } = api.http.nft.getUserNFTs.useQuery(
-    {
-      address: networkStore.address!,
-      page: 0,
-      hitsPerPage: 100,
-    },
-    {
-      enabled: !!networkStore.address,
-    }
-  );
 
   const [linkCopied, setLinkCopied] = useState<boolean>(false);
   const [name, setName] = useState<string | undefined>(undefined);
@@ -131,11 +121,11 @@ export default function AccountPopup({
 
   // Add nft avatars to the list
   useEffect(() => {
-    if (nfts) {
-      const nftAvatars = nfts.map(nft => nft.image);
+    if (userNFT) {
+      const nftAvatars = userNFT.map(nft => nft.image);
       setAvatars([...avatars, ...nftAvatars]);
     }
-  }, [nfts]);
+  }, [userNFT]);
 
   useEffect(() => {
     if (account.name != name) setName(account.name);

@@ -12,6 +12,11 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
   const accountDataQuery = api.http.accounts.getAccount.useQuery({
     userAddress: networkStore.address || '',
   });
+  const getUserNFTQuery = api.http.nft.getUserNFTs.useQuery({
+    address: networkStore.address!,
+    page: 0,
+    hitsPerPage: 100,
+  });
   const refetchAccountData = accountDataQuery.refetch;
   const accountData = accountDataQuery.data;
   const nameMutator = api.http.accounts.setName.useMutation();
@@ -48,6 +53,7 @@ export default function ProfileLayout({ children }: { children: React.ReactNode 
             }),
         },
         refetchAccountData: refetchAccountData,
+        userNFT: getUserNFTQuery.data,
         ratings: {
           gameFeedbackMutator: feedback =>
             gameFeedbackMutator.mutate({
