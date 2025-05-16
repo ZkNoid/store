@@ -115,6 +115,7 @@ export default function Page() {
                 world. You can become the King, Warrior, Wizard, or Citizen in this world.
               </span>
             </div>
+            {/*
             <div
               className={
                 'col-span-3 grid grid-cols-3 lg:!flex flex-row gap-[2.353vw] lg:!gap-[3.073vw]'
@@ -180,15 +181,15 @@ export default function Page() {
                   Already Minted
                 </span>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
       <NFTStorefront
         collectionID={collectionID}
-        setCollectionID={(value) => setCollectionID(value)}
+        setCollectionID={value => setCollectionID(value)}
         gridMode={gridMode}
-        setGridMode={(value) => setGridMode(value)}
+        setGridMode={value => setGridMode(value)}
       />
     </div>
   );

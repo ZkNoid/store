@@ -109,7 +109,7 @@ export function CollectionSlide() {
               You can become the King, Warrior, Wizard, or Citizen in this world.
             </span>
           </div>
-          <div
+          {/* <div
             className={
               'col-span-3 grid grid-cols-3 lg:!flex flex-row gap-[2.353vw] lg:!gap-[3.073vw]'
             }
@@ -173,8 +173,8 @@ export function CollectionSlide() {
               >
                 Already Minted
               </span>
-            </div>
-          </div>
+            </div> 
+          </div>*/}
         </div>
       </div>
     </div>
