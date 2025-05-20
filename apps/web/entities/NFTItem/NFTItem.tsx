@@ -50,7 +50,7 @@ export default function NFTItem({
             {nft.name}
           </span>
 
-          <span
+          {/* <span
             className={
               'hidden lg:!inline-block col-span-2 text-foreground text-[0.833vw] leading-[110%] font-plexsans'
             }
@@ -74,6 +74,8 @@ export default function NFTItem({
               Available for Mint
             </span>
           )}
+          */}
+          {/* 
           {nft.isMinted ? (
             <span
               className={
@@ -92,7 +94,7 @@ export default function NFTItem({
                 Buy
               </span>
             </div>
-          )}
+          )} */}
         </>
       ) : (
         <div
@@ -108,7 +110,7 @@ export default function NFTItem({
           </span>
           {showMintInfo && (
             <>
-              <span
+              {/* <span
                 className={cn(
                   'text-foreground',
                   gridMode == 4
@@ -119,7 +121,7 @@ export default function NFTItem({
                 )}
               >
                 {formatUnits(nft.price)} MINA
-              </span>
+              </span> */}
               {nft.isMinted ? (
                 <div
                   className={
@@ -140,13 +142,13 @@ export default function NFTItem({
                     'bg-left-accent cursor-pointer hover:opacity-80 py-[1.412vw] lg:!py-[0.417vw] rounded-[1.176vw] lg:!rounded-[0.26vw] flex flex-col items-center justify-center w-full'
                   }
                 >
-                  <span
+                  {/* <span
                     className={
                       'font-museo text-bg-grey font-medium text-[3.765vw] lg:!text-[1.042vw] leading-[100%]'
                     }
                   >
                     Buy
-                  </span>
+                  </span> */}
                 </div>
               )}
             </>
