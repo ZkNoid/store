@@ -25,7 +25,7 @@ export default function CollectionCard({ collection }: { collection: ICollection
     collectionAddress: collection.address,
     version: `v${collection.source.version}`,
     indexName: collection.source.indexName,
-    page: 1,
+    page: 0,
     hitsPerPage: 5,
   });
   return (
