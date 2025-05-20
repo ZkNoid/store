@@ -20,11 +20,12 @@ export default function CollectionsPage() {
         <div className="grid grid-cols-2 gap-[0.781vw]">
           {collections &&
             collections
-              // .filter(
-              //   (collection) =>
-              //     collection.name.toLocaleLowerCase() === NFTCollectionIDList.Zknoid ||
-              //     collection.name.toLocaleLowerCase() === NFTCollectionIDList.Tileville
-              // )
+              // Sort Zknoid to the top
+              .sort((a, b) => {
+                if (a.name.toLowerCase() === NFTCollectionIDList.Zknoid) return -1;
+                if (b.name.toLowerCase() === NFTCollectionIDList.Zknoid) return 1;
+                return 0;
+              })
               .map((collection, index) => <CollectionCard key={index} collection={collection} />)}
         </div>
       </section>

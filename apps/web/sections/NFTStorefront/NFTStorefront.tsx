@@ -54,8 +54,8 @@ const NFTStorefrontWithSuspense = ({
   gridMode,
   setGridMode,
 }: {
-  collectionID: NFTCollectionIDList;
-  setCollectionID: (value: NFTCollectionIDList) => void;
+  collectionID: string;
+  setCollectionID: (value: string) => void;
   gridMode: 1 | 4 | 6;
   setGridMode: (value: 1 | 4 | 6) => void;
 }) => {
@@ -73,17 +73,18 @@ const NFTStorefrontWithSuspense = ({
   );
   const collectionName = params.get('collection');
 
+  const { data: allCollections } = api.http.nft.getCollections.useQuery();
   const { data: collectionItemsData, isLoading } = api.http.nft.getCollectionsNFT.useQuery({
     version: 'v2',
     indexName: 'mainnet',
-    collectionName: collectionName as string,
+    collectionName: collectionID ?? collectionName ?? 'zknoid',
     page: page,
     hitsPerPage: 20,
   });
 
   useEffect(() => {
     if (collectionName) {
-      setCollectionID(collectionName as NFTCollectionIDList);
+      setCollectionID(collectionName);
     }
   }, [collectionName]);
 
@@ -108,8 +109,6 @@ const NFTStorefrontWithSuspense = ({
   useEffect(() => {
     // if (searchedItems && searchedItems.length != 0) return;
 
-    console.log('Data');
-    console.log(collectionItemsData);
     if (!collectionItemsData || !('nfts' in collectionItemsData)) return;
 
     if (page === 0) {
@@ -153,8 +152,8 @@ const NFTStorefrontWithSuspense = ({
         }
       >
         <Select
-          value={collectionID}
-          onValueChange={value => setCollectionID(value as NFTCollectionIDList)}
+          value={collectionID ?? collectionName ?? 'zknoid'}
+          onValueChange={value => setCollectionID(value)}
         >
           <SelectTriggerPick className="lg:!col-span-4">
             <span>Collection: </span>
@@ -162,8 +161,17 @@ const NFTStorefrontWithSuspense = ({
           </SelectTriggerPick>
           <SelectContent>
             <SelectGroup>
-              <SelectItem value={NFTCollectionIDList.Zknoid}>ZkNoid</SelectItem>
-              <SelectItem value={NFTCollectionIDList.Tileville}>Tileville</SelectItem>
+              {allCollections
+                ?.sort((a, b) => {
+                  if (a.name.toLowerCase() === 'zknoid') return -1;
+                  if (b.name.toLowerCase() === 'zknoid') return 1;
+                  return 0;
+                })
+                .map((item, index) => (
+                  <SelectItem key={index} value={item.name}>
+                    {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+                  </SelectItem>
+                ))}
             </SelectGroup>
           </SelectContent>
         </Select>
@@ -406,8 +414,8 @@ const NFTStorefrontWithSuspense = ({
 };
 
 export default function NFTStorefront(props: {
-  collectionID: NFTCollectionIDList;
-  setCollectionID: (value: NFTCollectionIDList) => void;
+  collectionID: string;
+  setCollectionID: (value: string) => void;
   gridMode: 1 | 4 | 6;
   setGridMode: (value: 1 | 4 | 6) => void;
 }) {

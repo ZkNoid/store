@@ -3,20 +3,10 @@
 import NFTStorefront from '../../sections/NFTStorefront';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import { NFTCollectionIDList } from '../../lib/types/nftTypes';
 import Link from 'next/link';
-import { api } from '../../trpc/react';
 
 export default function Page() {
-  const nftLength = 112;
-  const nftTotalPrice = 11340;
-  const nftMintedAmount = 54;
-
-  const { data: collections } = api.http.nft.getCollections.useQuery();
-
-  const [collectionID, setCollectionID] = useState<NFTCollectionIDList>(
-    NFTCollectionIDList.Tileville
-  );
+  const [collectionID, setCollectionID] = useState<string>('zknoid');
   const [gridMode, setGridMode] = useState<1 | 4 | 6>(4);
   const [isMobile, setIsMobile] = useState<boolean>(false);
 
@@ -115,73 +105,6 @@ export default function Page() {
                 world. You can become the King, Warrior, Wizard, or Citizen in this world.
               </span>
             </div>
-            {/*
-            <div
-              className={
-                'col-span-3 grid grid-cols-3 lg:!flex flex-row gap-[2.353vw] lg:!gap-[3.073vw]'
-              }
-            >
-              <div
-                className={
-                  'justify-between lg:!justify-normal p-[2.353vw] lg:!p-[0.521vw] backdrop-blur-[20px] bg-foreground/10 rounded-[2.353vw] lg:!rounded-[0.521vw] flex flex-col gap-[2.353vw] lg:!gap-[0.521vw]'
-                }
-              >
-                <span
-                  className={
-                    'text-foreground text-[4.706vw] lg:!text-[1.667vw] font-plexsans font-bold leading-[100%]'
-                  }
-                >
-                  {nftLength}
-                </span>
-                <span
-                  className={
-                    'text-foreground text-[3.765vw] lg:!text-[0.833vw] font-plexsans leading-[110%]'
-                  }
-                >
-                  Total Volume
-                </span>
-              </div>
-              <div
-                className={
-                  'justify-between lg:!justify-normal p-[2.353vw] lg:!p-[0.521vw] backdrop-blur-[20px] bg-foreground/10 rounded-[2.353vw] lg:!rounded-[0.521vw] flex flex-col gap-[2.353vw] lg:!gap-[0.521vw]'
-                }
-              >
-                <span
-                  className={
-                    'text-foreground text-[4.706vw] lg:!text-[1.667vw] font-plexsans font-bold leading-[100%]'
-                  }
-                >
-                  {nftTotalPrice} MINA
-                </span>
-                <span
-                  className={
-                    'text-foreground text-[3.765vw] lg:!text-[0.833vw] font-plexsans leading-[110%]'
-                  }
-                >
-                  Total price
-                </span>
-              </div>
-              <div
-                className={
-                  'p-[2.353vw] lg:!p-[0.521vw] backdrop-blur-[20px] bg-foreground/10 rounded-[2.353vw] lg:!rounded-[0.521vw] flex flex-col justify-between lg:!justify-normal gap-[2.353vw] lg:!gap-[0.521vw]'
-                }
-              >
-                <span
-                  className={
-                    'text-foreground text-[4.706vw] lg:!text-[1.667vw] font-plexsans font-bold leading-[100%]'
-                  }
-                >
-                  {nftMintedAmount}
-                </span>
-                <span
-                  className={
-                    'text-foreground text-[3.765vw] lg:!text-[0.833vw] font-plexsans leading-[110%]'
-                  }
-                >
-                  Already Minted
-                </span>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>

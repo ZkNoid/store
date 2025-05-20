@@ -119,7 +119,7 @@ export default function NFTDetailsModal({
                 <div className={'flex flex-col gap-[1.176vw] lg:!gap-[0.26vw]'}>
                   <span
                     className={
-                      'font-museo text-[4.706vw] lg:!text-[1.25vw] font-bold text-foreground'
+                      'font-museo text-nowrap text-[4.2vw] lg:!text-[1.1vw] font-bold text-foreground'
                     }
                   >
                     {nft.name}
@@ -170,7 +170,7 @@ export default function NFTDetailsModal({
                           viewBox="0 0 15 16"
                           fill="none"
                           xmlns="http://www.w3.org/2000/svg"
-                          className={'w-[5.882vw] lg:!w-[0.833vw] h-[5.882vw] lg:!h-[0.833vw]'}
+                          className={'w-[5.882vw] lg:!w-full h-[5.882vw] lg:!h-[0.833vw]'}
                         >
                           <circle cx="7.5" cy="8" r="7.5" fill="#F9F8F4" />
                           <path

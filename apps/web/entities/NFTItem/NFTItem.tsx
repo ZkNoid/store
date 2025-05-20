@@ -100,8 +100,8 @@ export default function NFTItem({
         >
           <span
             className={cn(
-              'font-museo text-foreground font-bold leading-[100%] text-[3.765vw]',
-              gridMode == 4 ? 'lg:!text-[1.25vw]' : 'lg:!text-[0.833vw]'
+              'font-museo text-nowrap text-foreground font-bold leading-[100%] text-[3.4vw]',
+              gridMode == 4 ? 'lg:!text-[1.1vw]' : 'lg:!text-[0.833vw]'
             )}
           >
             {nft.name}

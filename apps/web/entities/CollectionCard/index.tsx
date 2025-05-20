@@ -31,7 +31,7 @@ export default function CollectionCard({ collection }: { collection: ICollection
   return (
     <Link
       href={`/nft?collection=${collection.name.toLocaleLowerCase()}`}
-      className="cursor-pointer p-[0.781vw] flex flex-col gap-[0.781vw] bg-[#212121] rounded-[0.521vw] hover:scale-105 transition-all duration-300 ease-in-out"
+      className="cursor-pointer p-[0.781vw] flex flex-col gap-[0.781vw] bg-[#212121] rounded-[0.521vw] hover:scale-95 transition-all duration-300 ease-in-out"
     >
       <div className="w-full flex items-center">
         <span className="text-[1.25vw] font-bold font-museo">{collection.name}</span>
