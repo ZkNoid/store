@@ -146,18 +146,24 @@ const getV2Collections = async (source: ISourceData): Promise<ICollection[]> => 
   const result = await client.searchForFacetValues({
     indexName: source.indexName,
     facetName: 'collection',
+    searchForFacetValuesRequest: {
+      facetQuery: '',
+      maxFacetHits: 100, // up to 100, NOT 1000
+    },
   });
 
   if (!result) return [];
 
-  return result.facetHits.map(hit => {
-    return {
-      name: hit.value,
-      count: hit.count,
-      source,
-      address: 'B62qs2NthDuxAT94tTFg6MtuaP1gaBxTZyNv9D3uQiQciy1VsaimNFT',
-    };
-  });
+  return result.facetHits
+    .filter(hit => hit.count > 5)
+    .map(hit => {
+      return {
+        name: hit.value,
+        count: hit.count,
+        source,
+        address: 'B62qs2NthDuxAT94tTFg6MtuaP1gaBxTZyNv9D3uQiQciy1VsaimNFT',
+      };
+    });
 };
 
 const getV2NFTs = async (
