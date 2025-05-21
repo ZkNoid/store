@@ -2,9 +2,11 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import { NFTCollectionIDList } from '../../lib/types/nftTypes';
+import { NFT, NFTCollectionIDList } from '../../lib/types/nftTypes';
 import { ICollection } from '../../lib/types/nftTypes';
 import { api } from '../../trpc/react';
+import { useEffect, useState } from 'react';
+import { NftInfo } from '@silvana-one/api';
 
 const mockedCollectionsQuery = {
   ZkNoid_test: {
@@ -26,8 +28,34 @@ export default function CollectionCard({ collection }: { collection: ICollection
     version: `v${collection.source.version}`,
     indexName: collection.source.indexName,
     page: 0,
-    hitsPerPage: 5,
+    hitsPerPage: 100,
   });
+
+  const [shownCollectionItems, setShownCollectionItems] = useState<NFT[]>([]);
+
+  useEffect(() => {
+    if (collectionItemsData && 'nfts' in collectionItemsData) {
+      let sorted = collectionItemsData.nfts.sort((a, b) => {
+        let rarityToNumber = (rarity: string) => {
+          if (rarity === 'Bronze') return 1;
+          if (rarity === 'Silver') return 2;
+          if (rarity === 'Gold') return 3;
+
+          return 0;
+        };
+        let aValue = rarityToNumber(
+          a.params.find(p => p.key === 'Rarity')?.value?.data || 'Bronze'
+        );
+        let bValue = rarityToNumber(
+          b.params.find(p => p.key === 'Rarity')?.value?.data || 'Bronze'
+        );
+
+        return bValue - aValue;
+      });
+      setShownCollectionItems(sorted.slice(0, 5));
+    }
+  }, [collectionItemsData]);
+
   return (
     <Link
       href={`/nft?collection=${collection.name.toLocaleLowerCase()}`}
@@ -37,10 +65,9 @@ export default function CollectionCard({ collection }: { collection: ICollection
         <span className="text-[1.25vw] font-bold font-museo">{collection.name}</span>
       </div>
       <div className="gap-[0.781vw] grid grid-cols-4 grid-rows-2">
-        {collectionItemsData &&
-          'nfts' in collectionItemsData &&
-          collectionItemsData.nfts.length > 0 &&
-          collectionItemsData.nfts.map((nft, index) => (
+        {shownCollectionItems &&
+          shownCollectionItems.length > 0 &&
+          shownCollectionItems.map((nft, index) => (
             <div
               key={index}
               className={
