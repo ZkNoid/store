@@ -14,6 +14,7 @@ export function ProfileHeader({
   onNameChange,
   openAvatarModal,
   avatarId,
+  avatarUrl,
 }: {
   account?: {
     userAddress: string;
@@ -23,6 +24,7 @@ export function ProfileHeader({
   onNameChange: (name: string) => void;
   openAvatarModal: () => void;
   avatarId: number;
+  avatarUrl: string;
 }) {
   const balanceStore = useMinaBalancesStore();
   const notificationStore = useNotificationStore();
@@ -40,9 +42,6 @@ export function ProfileHeader({
     setIsEditing(false);
   };
 
-  console.log(account);
-  console.log(account?.userAddress && balanceStore.balances[account?.userAddress]);
-
   return (
     <section className="flex flex-row gap-[0.781vw]">
       <button
@@ -53,9 +52,11 @@ export function ProfileHeader({
       >
         <Image
           src={
-            avatarId !== 0
-              ? `https://res.cloudinary.com/dw4kivbv0/image/upload/f_auto,q_auto/v1/store/avatars/${avatarId}`
-              : 'https://res.cloudinary.com/dw4kivbv0/image/upload/f_auto,q_auto/v1/store/avatars/unset'
+            avatarUrl
+              ? avatarUrl
+              : avatarId !== 0
+                ? `https://res.cloudinary.com/dw4kivbv0/image/upload/f_auto,q_auto/v1/store/avatars/${avatarId}`
+                : 'https://res.cloudinary.com/dw4kivbv0/image/upload/f_auto,q_auto/v1/store/avatars/unset'
           }
           alt="Profile Image"
           width={300}

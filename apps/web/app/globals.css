@@ -85,3 +85,21 @@ input[type='search']::-webkit-search-results-button,
 input[type='search']::-webkit-search-results-decoration {
   display: none;
 }
+
+
+
+@layer theme {
+  :root {
+    @media (width >= 640px) {
+      --spacing: 0.2315vw;
+    }
+  }
+}
+
+
+
+@layer theme {
+  :root {
+    --spacing: 4px;
+  }
+}

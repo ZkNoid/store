@@ -1,14 +1,14 @@
-import clsx, { ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import clsx, { ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function walletInstalled() {
-  return typeof (window as any).mina !== "undefined";
+  return typeof (window as any).mina !== 'undefined';
 }
 
 export async function requestAccounts() {
   if ((window as any).mina?.isPallad) {
     return await (window as any).mina
-      ?.request({ method: "mina_accounts" })
+      ?.request({ method: 'mina_accounts' })
       .then((resp: any) => resp.result);
   } else {
     return await (window as any).mina?.requestAccounts();
@@ -17,26 +17,26 @@ export async function requestAccounts() {
 
 export async function sendTransaction(txJson: any) {
   if ((window as any).mina?.isPallad) {
-    console.log("Signing", txJson);
+    console.log('Signing', txJson);
     const signResp = await (window as any).mina.request({
-      method: "mina_signTransaction",
+      method: 'mina_signTransaction',
       params: {
         transaction: JSON.parse(txJson),
       },
     });
 
-    console.log("Sign resp", signResp);
+    console.log('Sign resp', signResp);
 
     const sendResp = await (window as any).mina.request({
-      method: "mina_sendTransaction",
+      method: 'mina_sendTransaction',
       params: {
         signedTransaction: signResp.result,
         transactionBody: txJson,
-        transactionType: "zkapp",
+        transactionType: 'zkapp',
       },
     });
 
-    console.log("Send resp", sendResp);
+    console.log('Send resp', sendResp);
 
     return sendResp.result.hash;
   } else {
@@ -44,8 +44,8 @@ export async function sendTransaction(txJson: any) {
       const { hash } = await (window as any).mina.sendTransaction({
         transaction: txJson,
         feePayer: {
-          fee: "0.1",
-          memo: "",
+          fee: '0.1',
+          memo: '',
         },
       });
       return hash;
@@ -58,8 +58,8 @@ export async function sendTransaction(txJson: any) {
   }
 }
 
-export const formatAddress = (address: string | undefined) =>
-  address ? address.slice(0, 5) + "..." + address.slice(-5) : "None";
+export const formatAddress = (address: string | undefined, visible = 5) =>
+  address ? address.slice(0, visible) + '...' + address.slice(-visible) : 'None';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -68,7 +68,7 @@ export function cn(...inputs: ClassValue[]) {
 export function abbreviateNumber(n: number): string {
   // Thresholds and labels (Q - Quadrillion, T - Trillion, etc.)
   const values = [1e15, 1e12, 1e9, 1e6, 1e3];
-  const symbols = ["Q", "T", "B", "M", "K"];
+  const symbols = ['Q', 'T', 'B', 'M', 'K'];
 
   for (let i = 0; i < values.length; i++) {
     if (n >= values[i]) {

@@ -1,7 +1,7 @@
-import clientPromise from "../../../app/lib/mongodb";
-import { z } from "zod";
+import clientPromise from '../../../app/lib/mongodb';
+import { z } from 'zod';
 
-import { createTRPCRouter, publicProcedure } from "../../../server/api/trpc";
+import { createTRPCRouter, publicProcedure } from '../../../server/api/trpc';
 
 const client = await clientPromise;
 const db = client?.db(process.env.MONGODB_DB);
@@ -14,7 +14,7 @@ export const txStoreRouter = createTRPCRouter({
 
       return {
         transactions: await db
-          .collection("transactionStore")
+          .collection('transactionStore')
           .find({
             userAddress: input.userAddress,
           })
@@ -28,12 +28,12 @@ export const txStoreRouter = createTRPCRouter({
         userAddress: z.string(),
         txHash: z.string(),
         type: z.string(),
-      }),
+      })
     )
     .mutation(async ({ input }) => {
       if (!db) return;
 
-      await db.collection("transactionStore").insertOne({
+      await db.collection('transactionStore').insertOne({
         userAddress: input.userAddress,
         txHash: input.txHash,
         type: input.type,

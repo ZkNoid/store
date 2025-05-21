@@ -25,7 +25,8 @@ import Image from 'next/image';
 import { api } from '../../trpc/react';
 import { useNetworkStore } from '@zknoid/sdk/lib/stores/network';
 import { useNotificationStore } from '@zknoid/sdk/components/shared/Notification/lib/notificationStore';
-import { useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import SetupStoreContext from '../../../../packages/sdk/lib/contexts/SetupStoreContext';
 const zknoidAvatars = [
   avatar1,
   avatar2,
@@ -98,6 +99,29 @@ export default function ChangeAvatarModal({
   const notificationStore = useNotificationStore();
   const { mutate: setAvatarId } = api.http.accounts.setAvatar.useMutation();
 
+  const [avatars, setAvatars] = useState<string[]>(zknoidAvatars);
+
+  const { refetchAccountData } = useContext(SetupStoreContext);
+
+  const { data: nfts } = api.http.nft.getUserNFTs.useQuery(
+    {
+      address: networkStore.address!,
+      page: 0,
+      hitsPerPage: 100,
+    },
+    {
+      enabled: !!networkStore.address,
+    }
+  );
+
+  useEffect(() => {
+    console.log('nfts', nfts);
+    if (nfts) {
+      const nftAvatars = nfts.map(nft => nft.image);
+      setAvatars([...avatars, ...nftAvatars]);
+    }
+  }, [nfts]);
+
   return (
     <AnimatePresence>
       <motion.div
@@ -114,7 +138,7 @@ export default function ChangeAvatarModal({
           className={
             'relative flex flex-col rounded-[0.521vw] bg-[#373737] p-[2.083vw] gap-[0.781vw]'
           }
-          onClick={(e) => e.stopPropagation()}
+          onClick={e => e.stopPropagation()}
         >
           <div className="flex flex-row items-center justify-between">
             <span className="text-[1.667vw] font-museo font-medium">Edit Avatar</span>
@@ -138,16 +162,18 @@ export default function ChangeAvatarModal({
           <div className="">
             {selectedAvatarId ? (
               <Image
-                src={zknoidAvatars[selectedAvatarId - 1]}
+                src={avatars[selectedAvatarId - 1]}
                 alt="avatar"
                 className="w-[5.2083vw] h-[5.2083vw]"
+                width={208}
+                height={208}
               />
             ) : (
               <NoAvatar />
             )}
           </div>
           <div className="grid grid-cols-5 gap-[0.26vw]">
-            {zknoidAvatars.map((item, index) => (
+            {avatars.map((item, index) => (
               <button
                 key={index}
                 onClick={() => {
@@ -173,7 +199,7 @@ export default function ChangeAvatarModal({
                 }}
                 className="hover:opacity-80 cursor-ponter w-[5.208vw] h-[5.208vw] overflow-hidden"
               >
-                <Image src={item} alt="avatar" className="w-full h-full" />
+                <Image src={item} alt="avatar" className="w-full h-full" width={208} height={208} />
               </button>
             ))}
           </div>
@@ -181,15 +207,29 @@ export default function ChangeAvatarModal({
             className="w-full h-[2.5vw] bg-[#B58BE5] items-center justify-center"
             onClick={() => {
               if (!networkStore.address) return;
-              setAvatarId({
-                userAddress: networkStore.address,
-                avatarId: selectedAvatarId || 0,
-              });
-              onClose(selectedAvatarId || 0);
+              const avatarId = selectedAvatarId || 0;
+
+              if (avatarId >= zknoidAvatars.length) {
+                setAvatarId({
+                  userAddress: networkStore.address,
+                  avatarId: undefined,
+                  avatarUrl: avatars[avatarId - 1],
+                });
+              } else {
+                setAvatarId({
+                  userAddress: networkStore.address,
+                  avatarId: avatarId,
+                  avatarUrl: undefined,
+                });
+              }
+              setTimeout(() => {
+                refetchAccountData?.();
+              }, 100);
               notificationStore.create({
                 type: 'success',
                 message: 'Avatar changed!',
               });
+              onClose(selectedAvatarId || 0);
             }}
           >
             <span className="text-[#212121]">Save changes</span>

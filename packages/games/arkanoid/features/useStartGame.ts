@@ -1,5 +1,5 @@
 import { getEnvContext } from "@zknoid/sdk/lib/envContext";
-import { useMinaBridge } from "@zknoid/sdk/lib/stores/protokitBalances";
+import { useMinaBridge } from "@zknoid/sdk/lib/hooks/observe-protokit-balance";
 // import { api } from "@zknoid/sdk/trpc/react";
 import { GameState } from "../lib/gameState";
 import { ICompetition } from "@zknoid/sdk/lib/types";

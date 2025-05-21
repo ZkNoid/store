@@ -1,17 +1,20 @@
-import Image from 'next/image';
+import Image from "next/image";
 import {
   useMinaBalancesStore,
-} from '../../../../../lib/stores/minaBalances';
-import { useNetworkStore } from '../../../../../lib/stores/network';
+} from "../../../../../lib/stores/minaBalances";
+import { useNetworkStore } from "../../../../../lib/stores/network";
+import {
+  useProtokitBalancesStore,
+} from "../../../../../lib/stores/protokitBalances";
 import {
   useObserveProtokitBalance,
-  useProtokitBalancesStore,
-} from '../../../../../lib/stores/protokitBalances';
-import CoinImg from '../../../../../components/widgets/Header/assets/coin.svg';
-import MinaCoinImg from '../../../../../components/widgets/Header/assets/mina.png';
-import { useContext } from 'react';
-import ZkNoidGameContext from '../../../../../lib/contexts/ZkNoidGameContext';
-import DepositMenuItem from '../../nonSSR/DepositMenuItem/DepositMenuItems';
+} from "../../../../../lib/hooks/observe-protokit-balance";
+
+import CoinImg from "../../../../../components/widgets/Header/assets/coin.svg";
+import MinaCoinImg from "../../../../../components/widgets/Header/assets/mina.png";
+import { useContext } from "react";
+import ZkNoidGameContext from "../../../../../lib/contexts/ZkNoidGameContext";
+import DepositMenuItem from "../../nonSSR/DepositMenuItem/DepositMenuItems";
 
 export default function DesktopBalanceInfo() {
   const minaBalancesStore = useMinaBalancesStore();
@@ -31,21 +34,21 @@ export default function DesktopBalanceInfo() {
   const { appchainSupported } = useContext(ZkNoidGameContext);
 
   return (
-    <div className="flex items-center gap-[0.521vw]">
+    <div className="flex items-center gap-[0.521vw] mr-[3.646vw]">
       <Image
         alt=""
         src={!appchainSupported ? MinaCoinImg : CoinImg}
-        className={'h-[1.354vw] w-[1.354vw]'}
+        className={"h-[1.354vw] w-[1.354vw]"}
       />
       <div
         className={
           !appchainSupported
-            ? 'w-full text-end lg:w-auto'
-            : 'w-full text-start lg:w-auto'
+            ? "w-full text-end lg:w-auto"
+            : "w-full text-start lg:w-auto"
         }
       >
         {!appchainSupported && (
-          <div className={'font-museo text-[0.833vw] font-medium'}>
+          <div className={"font-museo text-[0.833vw] font-medium"}>
             Wallet balance: {minaDeposit}
           </div>
         )}

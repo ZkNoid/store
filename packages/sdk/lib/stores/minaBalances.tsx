@@ -34,7 +34,7 @@ export const useMinaBalancesStore = create<
         state.loading = true;
       });
 
-      console.log("Balance fetching", balance);
+      console.log("Mina balance fetching", balance);
 
       set((state) => {
         state.loading = false;

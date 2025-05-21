@@ -1,14 +1,18 @@
 'use client';
 
 import { createContext } from 'react';
+import { NFT } from '../../../../apps/web/lib/types/nftTypes';
 
 interface ISetupStoreContext {
   account: {
     name: string | undefined;
     avatarId: number | undefined;
+    avatarUrl: string | undefined;
     nameMutator: ((name: string) => void) | undefined;
-    avatarIdMutator: ((avatarId: number) => void) | undefined;
+    avatarIdMutator: ((avatarId?: number, avatarUrl?: string) => void) | undefined;
   };
+  refetchAccountData: (() => void) | undefined;
+  userNFT: NFT[] | undefined;
   ratings: {
     gameFeedbackMutator:
       | ((feedback: {
@@ -79,9 +83,12 @@ const SetupStoreContext = createContext<ISetupStoreContext>({
   account: {
     name: undefined,
     avatarId: undefined,
+    avatarUrl: undefined,
     nameMutator: undefined,
     avatarIdMutator: undefined,
   },
+  refetchAccountData: undefined,
+  userNFT: undefined,
   ratings: {
     gameFeedbackMutator: undefined,
     getGameRatingQuery: undefined,

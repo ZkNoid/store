@@ -1,35 +1,41 @@
-"use client";
+'use client';
 
-import "reflect-metadata";
-import Footer from "@zknoid/sdk/components/widgets/Footer/Footer";
-import Header from "@zknoid/sdk/components/widgets/Header";
-import ZkNoidGameContext from "@zknoid/sdk/lib/contexts/ZkNoidGameContext";
-import SetupStoreContext from "../../../packages/sdk/lib/contexts/SetupStoreContext";
-import { useNetworkStore } from "@zknoid/sdk/lib/stores/network";
-import { api } from "../trpc/react";
-import Swiper from "../sections/Swiper";
-import { Suspense } from "react";
-import CentralBlock from "../widgets/CentralBlock";
-import Storefront from "../sections/Storefront";
+import 'reflect-metadata';
+import Footer from '@zknoid/sdk/components/widgets/Footer/Footer';
+import Header from '@zknoid/sdk/components/widgets/Header';
+import ZkNoidGameContext from '@zknoid/sdk/lib/contexts/ZkNoidGameContext';
+import SetupStoreContext from '../../../packages/sdk/lib/contexts/SetupStoreContext';
+import { useNetworkStore } from '@zknoid/sdk/lib/stores/network';
+import { api } from '../trpc/react';
+import Swiper from '../sections/Swiper';
+import { Suspense } from 'react';
+import CentralBlock from '../widgets/CentralBlock';
+import Storefront from '../sections/Storefront';
 
 export default function Home() {
   const networkStore = useNetworkStore();
-  const accountData = api.http.accounts.getAccount.useQuery({
-    userAddress: networkStore.address || "",
-  }).data;
+  const accountDataQuery = api.http.accounts.getAccount.useQuery({
+    userAddress: networkStore.address || '',
+  });
+  const accountData = accountDataQuery.data;
+  const refetchAccountData = accountDataQuery.refetch;
+  const getUserNFTQuery = api.http.nft.getUserNFTs.useQuery({
+    address: networkStore.address!,
+    page: 0,
+    hitsPerPage: 100,
+  });
   const nameMutator = api.http.accounts.setName.useMutation();
   const avatarIdMutator = api.http.accounts.setAvatar.useMutation();
   const gameFeedbackMutator = api.http.ratings.setGameFeedback.useMutation();
   const getGameIdQuery = api.http.ratings.getGameRating;
-  const setFavoriteGameStatusMutation =
-    api.http.favorites.setFavoriteGameStatus.useMutation();
+  const setFavoriteGameStatusMutation = api.http.favorites.setFavoriteGameStatus.useMutation();
   const getFavoriteGamesQuery = api.http.favorites.getFavoriteGames.useQuery({
-    userAddress: networkStore.address || "",
+    userAddress: networkStore.address || '',
   });
   const sendMessageMutation = api.ws.chat.sendMessage.useMutation();
   const onMessageSubscription = api.ws.chat.onMessage;
   const userTransactions = api.http.txStore.getUserTransactions.useQuery({
-    userAddress: networkStore.address || "",
+    userAddress: networkStore.address || '',
   });
   const addTransaction = api.http.txStore.addTransaction.useMutation();
   return (
@@ -45,28 +51,34 @@ export default function Home() {
           account: {
             name: accountData?.account?.name,
             avatarId: accountData?.account?.avatarId,
-            nameMutator: (name) =>
+            avatarUrl: accountData?.account?.avatarUrl,
+            nameMutator: name =>
               nameMutator.mutate({
-                userAddress: networkStore.address || "",
+                userAddress: networkStore.address || '',
                 name: name,
               }),
-            avatarIdMutator: (avatarId) =>
+            avatarIdMutator: (avatarId, avatarUrl) =>
               avatarIdMutator.mutate({
-                userAddress: networkStore.address || "",
+                userAddress: networkStore.address || '',
                 avatarId: avatarId,
+                avatarUrl: avatarUrl,
               }),
           },
+          refetchAccountData: refetchAccountData,
+          userNFT: getUserNFTQuery.data,
           ratings: {
-            gameFeedbackMutator: (feedback) =>
+            gameFeedbackMutator: feedback =>
               gameFeedbackMutator.mutate({
                 userAddress: feedback.userAddress,
                 gameId: feedback.gameId,
                 feedback: feedback.feedbackText,
                 rating: feedback.rating,
               }),
-            getGameRatingQuery: (gameId) =>
-              (getGameIdQuery.useQuery({ gameId: gameId })?.data
-                ?.rating as Record<number, number>) || undefined,
+            getGameRatingQuery: gameId =>
+              (getGameIdQuery.useQuery({ gameId: gameId })?.data?.rating as Record<
+                number,
+                number
+              >) || undefined,
           },
           favorites: {
             setFavoriteGameStatus: (userAddress, gameId, status) =>
@@ -101,7 +113,7 @@ export default function Home() {
         <div className="flex min-h-screen flex-col">
           <Header />
 
-          <main className={"px-[2.604vw]"}>
+          <main className={'px-[2.604vw]'}>
             <Swiper />
 
             <Suspense fallback={<p>Loading...</p>}>

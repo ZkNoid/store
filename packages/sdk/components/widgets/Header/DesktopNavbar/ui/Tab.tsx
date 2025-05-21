@@ -14,7 +14,7 @@ export default function Tab({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <div
-      className={"group relative flex flex-col px-[1.823vw]"}
+      className={"group relative flex flex-col px-[0.781vw]"}
       onMouseEnter={() => !!items && !isOpen && setIsOpen(true)}
       onMouseLeave={() => !!items && setIsOpen(false)}
     >

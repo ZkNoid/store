@@ -123,6 +123,15 @@ const nextConfig = {
         port: "",
         pathname: "/dw4kivbv0/image/upload/**",
       },
+      {
+        protocol: "https",
+        hostname: "gateway.pinata.cloud",
+        pathname: "/ipfs/**",
+      },
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+      }
     ],
   },
 };

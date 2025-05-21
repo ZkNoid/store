@@ -56,7 +56,13 @@ export const accountsRouter = createTRPCRouter({
       return !account;
     }),
   setAvatar: publicProcedure
-    .input(z.object({ userAddress: z.string(), avatarId: z.number() }))
+    .input(
+      z.object({
+        userAddress: z.string(),
+        avatarId: z.number().optional(),
+        avatarUrl: z.string().optional(),
+      })
+    )
     .mutation(async ({ input }) => {
       if (!db) return;
 
@@ -65,6 +71,7 @@ export const accountsRouter = createTRPCRouter({
         {
           $set: {
             avatarId: input.avatarId,
+            avatarUrl: input.avatarUrl,
           },
         },
         { upsert: true }
@@ -72,6 +79,7 @@ export const accountsRouter = createTRPCRouter({
       return {
         userAddress: input.userAddress,
         avatarId: input.avatarId,
+        avatarUrl: input.avatarUrl,
       };
     }),
 });

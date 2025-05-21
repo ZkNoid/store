@@ -14,7 +14,7 @@ import { getEnvContext } from "../../../../lib/envContext";
 import { useNetworkStore } from "../../../../lib/stores/network";
 import { MatchmakingFailModal } from "./modals/MatchmakingFailModal";
 import { useProtokitChainStore } from "../../../../lib/stores/protokitChain";
-import { useMinaBridge } from "../../../../lib/stores/protokitBalances";
+import { useMinaBridge } from "../../../../lib/hooks/observe-protokit-balance";
 import { formatUnits } from "../../../../lib/unit";
 
 const OpponentItem = ({

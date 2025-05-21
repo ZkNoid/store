@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { ReactNode, useState, useEffect } from "react";
-import { useRoundsStore } from "../../../../packages/games/lottery/lib/roundsStore";
-import { api } from "../../trpc/react";
-import { api as vanillaApi } from "../../trpc/vanilla";
+import { ReactNode, useState, useEffect } from 'react';
+import { useRoundsStore } from '../../../../packages/games/lottery/lib/roundsStore';
+import { api } from '../../trpc/react';
+import { api as vanillaApi } from '../../trpc/vanilla';
 
-import { ILotteryRound } from "../../../../packages/games/lottery/lib/types";
-import { useNetworkStore } from "../../../../packages/sdk/lib/stores/network";
-import LotteryContext from "../../../../packages/games/lottery/lib/contexts/LotteryContext";
-import SetupStoreContext from "../../../../packages/sdk/lib/contexts/SetupStoreContext";
-import { LOTTERY_ROUND_OFFSET } from "../../../../packages/games/lottery/ui/TicketsSection/OwnedTickets/lib/constant";
+import { ILotteryRound } from '../../../../packages/games/lottery/lib/types';
+import { useNetworkStore } from '../../../../packages/sdk/lib/stores/network';
+import LotteryContext from '../../../../packages/games/lottery/lib/contexts/LotteryContext';
+import SetupStoreContext from '../../../../packages/sdk/lib/contexts/SetupStoreContext';
+import { LOTTERY_ROUND_OFFSET } from '../../../../packages/games/lottery/ui/TicketsSection/OwnedTickets/lib/constant';
 
 export default function Layout({ children }: { children: ReactNode }) {
   const roundsStore = useRoundsStore();
@@ -35,35 +35,40 @@ export default function Layout({ children }: { children: ReactNode }) {
     }
   );
 
+  const getUserNFTQuery = api.http.nft.getUserNFTs.useQuery({
+    address: networkStore.address!,
+    page: 0,
+    hitsPerPage: 100,
+  });
+
   const getMinaEventsQuery = api.http.lotteryBackend.getMinaEvents.useQuery({});
 
   const addGiftCodesMutation = api.http.giftCodes.addGiftCodes.useMutation();
-  const addClaimRequestMutation =
-    api.http.claimRequests.requestClaim.useMutation();
-  const sendTicketQueueMutation =
-    api.http.giftCodes.sendTicketQueue.useMutation();
+  const addClaimRequestMutation = api.http.claimRequests.requestClaim.useMutation();
+  const sendTicketQueueMutation = api.http.giftCodes.sendTicketQueue.useMutation();
   const getRoundsInfosQuery = api.http.lotteryBackend.getRoundInfos;
 
-  const accountData = api.http.accounts.getAccount.useQuery({
-    userAddress: networkStore.address || "",
-  }).data;
+  const accountDataQuery = api.http.accounts.getAccount.useQuery({
+    userAddress: networkStore.address || '',
+  });
+  const accountData = accountDataQuery.data;
+  const refetchAccountData = accountDataQuery.refetch;
   const nameMutator = api.http.accounts.setName.useMutation();
   const avatarIdMutator = api.http.accounts.setAvatar.useMutation();
 
   const gameFeedbackMutator = api.http.ratings.setGameFeedback.useMutation();
   const getGameIdQuery = api.http.ratings.getGameRating;
 
-  const setFavoriteGameStatusMutation =
-    api.http.favorites.setFavoriteGameStatus.useMutation();
+  const setFavoriteGameStatusMutation = api.http.favorites.setFavoriteGameStatus.useMutation();
   const getFavoriteGamesQuery = api.http.favorites.getFavoriteGames.useQuery({
-    userAddress: networkStore.address || "",
+    userAddress: networkStore.address || '',
   });
 
   const sendMessageMutation = api.ws.chat.sendMessage.useMutation();
   const onMessageSubscription = api.ws.chat.onMessage;
 
   const userTransactions = api.http.txStore.getUserTransactions.useQuery({
-    userAddress: networkStore.address || "",
+    userAddress: networkStore.address || '',
   });
   const addTransaction = api.http.txStore.addTransaction.useMutation();
 
@@ -92,28 +97,32 @@ export default function Layout({ children }: { children: ReactNode }) {
         account: {
           name: accountData?.account?.name,
           avatarId: accountData?.account?.avatarId,
-          nameMutator: (name) =>
+          avatarUrl: accountData?.account?.avatarUrl,
+          nameMutator: name =>
             nameMutator.mutate({
-              userAddress: networkStore.address || "",
+              userAddress: networkStore.address || '',
               name: name,
             }),
-          avatarIdMutator: (avatarId) =>
+          avatarIdMutator: (avatarId, avatarUrl) =>
             avatarIdMutator.mutate({
-              userAddress: networkStore.address || "",
+              userAddress: networkStore.address || '',
               avatarId: avatarId,
+              avatarUrl: avatarUrl,
             }),
         },
+        refetchAccountData: refetchAccountData,
+        userNFT: getUserNFTQuery.data,
         ratings: {
-          gameFeedbackMutator: (feedback) =>
+          gameFeedbackMutator: feedback =>
             gameFeedbackMutator.mutate({
               userAddress: feedback.userAddress,
               gameId: feedback.gameId,
               feedback: feedback.feedbackText,
               rating: feedback.rating,
             }),
-          getGameRatingQuery: (gameId) =>
-            (getGameIdQuery.useQuery({ gameId: gameId })?.data
-              ?.rating as Record<number, number>) || undefined,
+          getGameRatingQuery: gameId =>
+            (getGameIdQuery.useQuery({ gameId: gameId })?.data?.rating as Record<number, number>) ||
+            undefined,
         },
         favorites: {
           setFavoriteGameStatus: (userAddress, gameId, status) =>
@@ -153,17 +162,15 @@ export default function Layout({ children }: { children: ReactNode }) {
             (getRoundsInfosQuery.useQuery(
               {
                 roundIds: !oneDay
-                  ? roundsIds.map((roundId) => roundId - LOTTERY_ROUND_OFFSET)
+                  ? roundsIds.map(roundId => roundId - LOTTERY_ROUND_OFFSET)
                   : roundsIds,
                 oneDay: oneDay,
               },
               params
             )?.data as Record<number, ILotteryRound>) || undefined,
-          addGiftCodesMutation: (giftCodes) =>
-            addGiftCodesMutation.mutate(giftCodes),
-          addClaimRequestMutation: (claim) =>
-            addClaimRequestMutation.mutate(claim),
-          sendTicketQueueMutation: (ticketQueue) =>
+          addGiftCodesMutation: giftCodes => addGiftCodesMutation.mutate(giftCodes),
+          addClaimRequestMutation: claim => addClaimRequestMutation.mutate(claim),
+          sendTicketQueueMutation: ticketQueue =>
             sendTicketQueueMutation.mutate({
               userAddress: ticketQueue.userAddress,
               giftCode: ticketQueue.giftCode,

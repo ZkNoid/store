@@ -1,41 +1,30 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { GameComparisonType } from "@zknoid/sdk/lib/comparators/gameComparator";
-import {
-  ZkNoidGameFeature,
-  ZkNoidGameGenre,
-} from "@zknoid/sdk/lib/platform/game_tags";
-import { ZkNoidEventType } from "@zknoid/sdk/lib/platform/game_events";
-import Events from "../../widgets/Events";
-import GenresFilter from "../../entities/GenresFilter";
-import GameStore from "../GameStore";
-import WidgetsSwitch from "../../widgets/WidgetsSwitch";
-import { useSearchParams } from "next/navigation";
-import Faq from "../Faq";
-import Favorites from "../Favorites";
-import { announcedGames, defaultGames, IGame } from "@/app/constants/games";
-import MemecoinsBanner from "../MemecoinsBanner";
+import { useEffect, useState } from 'react';
+import { GameComparisonType } from '@zknoid/sdk/lib/comparators/gameComparator';
+import { ZkNoidGameFeature, ZkNoidGameGenre } from '@zknoid/sdk/lib/platform/game_tags';
+import { ZkNoidEventType } from '@zknoid/sdk/lib/platform/game_events';
+import Events from '../../widgets/Events';
+import GenresFilter from '../../entities/GenresFilter';
+import GameStore from '../GameStore';
+import WidgetsSwitch from '../../widgets/WidgetsSwitch';
+import { useSearchParams } from 'next/navigation';
+import Faq from '../Faq';
+import Favorites from '../Favorites';
+import { announcedGames, defaultGames, IGame } from '@/app/constants/games';
+import MemecoinsBanner from '../MemecoinsBanner';
 
 export default function Storefront() {
   const searchParams = useSearchParams();
-  const widget = searchParams.get("widget");
+  const widget = searchParams.get('widget');
 
-  const [games, setGames] = useState<IGame[]>(
-    defaultGames.concat(announcedGames),
-  );
-  const [sortBy, setSortBy] = useState<GameComparisonType>(
-    GameComparisonType.RatingLow,
-  );
+  const [games, setGames] = useState<IGame[]>(defaultGames.concat(announcedGames));
+  const [sortBy, setSortBy] = useState<GameComparisonType>(GameComparisonType.RatingLow);
   const [genresSelected, setGenresSelected] = useState<ZkNoidGameGenre[]>([]);
-  const [eventTypesSelected, setEventTypesSelected] = useState<
-    ZkNoidEventType[]
-  >([]);
-  const [featuresSelected, setFeaturesSelected] = useState<ZkNoidGameFeature[]>(
-    [],
-  );
+  const [eventTypesSelected, setEventTypesSelected] = useState<ZkNoidEventType[]>([]);
+  const [featuresSelected, setFeaturesSelected] = useState<ZkNoidGameFeature[]>([]);
   useEffect(() => {
-    const zkNoidConfig = import("@zknoid/games/config");
+    const zkNoidConfig = import('@zknoid/games/config');
 
     zkNoidConfig.then((zkNoidGames) => {
       setGames(
@@ -49,10 +38,10 @@ export default function Storefront() {
             features: x.features,
             tags: [],
             defaultPage: x.pageCompetitionsList
-              ? "competitions-list"
+              ? 'competitions-list'
               : x.lobby
-                ? "lobby/undefined"
-                : "global",
+                ? 'lobby/undefined'
+                : 'global',
             active: true,
             isReleased: x.isReleased,
             releaseDate: x.releaseDate,
@@ -62,20 +51,20 @@ export default function Storefront() {
             rating: 0,
             externalUrl: x.externalUrl,
           })) as IGame[]
-        ).concat(announcedGames),
+        ).concat(announcedGames)
       );
     });
   }, []);
   return (
     <div
       className={
-        "relative mt-[3.646vw] h-full w-full rounded-[2.604vw] border-2 border-left-accent bg-bg-grey p-[2.083vw]"
+        'relative mt-[3.646vw] h-full w-full rounded-[2.604vw] border-2 border-left-accent bg-bg-grey p-[2.083vw]'
       }
     >
       <WidgetsSwitch />
-      {widget == "favorites" ? (
+      {widget == 'favorites' ? (
         <Favorites games={games} />
-      ) : widget == "faq" ? (
+      ) : widget == 'faq' ? (
         <Faq />
       ) : (
         <>

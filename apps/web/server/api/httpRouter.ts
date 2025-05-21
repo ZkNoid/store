@@ -11,7 +11,7 @@ import { claimRequestRouter } from "./routers/claim-requests";
 import { memetokensRouter } from "./routers/memetokens";
 import { txStoreRouter } from "./routers/txStore";
 import { accountStatsRouter } from "./routers/accounts-stats";
-
+import { nftRouter } from "./routers/NFT";
 /**
  * This is the primary router for your server.
  *
@@ -19,6 +19,7 @@ import { accountStatsRouter } from "./routers/accounts-stats";
  */
 export const httpRouter = createTRPCRouter({
   favorites: favoritesRouter,
+  nft: nftRouter,
   ratings: ratingsRouter,
   logging: loggingRouter,
   progress: progressRouter,

@@ -17,7 +17,7 @@ export default function ProfilePage() {
     userAddress: networkStore.address || '',
   });
   const [account, setAccount] = useState<
-    { userAddress: string; name?: string; avatarId?: number } | undefined
+    { userAddress: string; name?: string; avatarId?: number; avatarUrl?: string } | undefined
   >(undefined);
   const [activeTab, setActiveTab] = useState<Tab>(Tab.Stats);
   const [changeAvatarModal, setChangeAvatarModal] = useState<boolean>();
@@ -31,6 +31,7 @@ export default function ProfilePage() {
             userAddress: data.userAddress,
             ...(data.name && { name: data.name }),
             ...(data.avatarId && { avatarId: data.avatarId }),
+            ...(data.avatarUrl && { avatarUrl: data.avatarUrl }),
           }
         : {
             userAddress: networkStore.address || '',
@@ -58,6 +59,7 @@ export default function ProfilePage() {
         onNameChange={handleNameChange}
         openAvatarModal={() => setChangeAvatarModal(true)}
         avatarId={currentAvatarId}
+        avatarUrl={account?.avatarUrl || ''}
       />
       <Tabs activeTab={activeTab} setActiveTab={setActiveTab} />
       {activeTab === Tab.Stats && <Stats />}

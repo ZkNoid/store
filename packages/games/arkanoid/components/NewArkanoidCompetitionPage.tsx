@@ -19,9 +19,9 @@ import {
 } from "zknoid-chain-dev";
 import { useNetworkStore } from "@zknoid/sdk/lib/stores/network";
 import {
-  useMinaBridge,
   useProtokitBalancesStore,
 } from "@zknoid/sdk/lib/stores/protokitBalances";
+import {useMinaBridge} from "@zknoid/sdk/lib/hooks/observe-protokit-balance";
 import ZkNoidGameContext from "@zknoid/sdk/lib/contexts/ZkNoidGameContext";
 import { arkanoidConfig } from "../config";
 import GamePage from "@zknoid/sdk/components/framework/GamePage";

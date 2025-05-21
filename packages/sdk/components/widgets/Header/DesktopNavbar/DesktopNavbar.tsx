@@ -32,7 +32,7 @@ const NetworkPicker = dynamic(
   () => import("../nonSSR/NetworkPicker/NetworkPicker"),
   {
     ssr: false,
-  }
+  },
 );
 
 export default function DesktopNavbar({
@@ -190,7 +190,7 @@ export default function DesktopNavbar({
               },
             ]}
           />
-          <Tab title={"Events"} link={"/#events"} />
+          <Tab title={"NFT Marketplace"} link={"/nft/collections"} />
           <Tab title={"FAQ & Support"} link={"/?widget=faq#faq"} />
           <Tab
             title={"Media"}
@@ -206,13 +206,13 @@ export default function DesktopNavbar({
                 ),
                 link: item.link,
                 text: item.name,
-              }))
+              })),
             )}
           />
           <Tab title={"Quest"} link={"https://quest.zknoid.io"} />
         </div>
 
-        <div className="relative flex gap-[1.042vw]">
+        <div className="relative flex gap-[1.042vw] items-center">
           {networkStore.walletConnected && networkStore.address ? (
             <>
               <Balance />

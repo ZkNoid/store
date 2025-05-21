@@ -4,7 +4,7 @@ import { GameState } from "../lib/gameState";
 // import { api } from "@zknoid/sdk/trpc/react";
 import { useStore } from "zustand";
 import { useSessionKeyStore } from "@zknoid/sdk/lib/stores/sessionKeyStorage";
-import { useMinaBridge } from "@zknoid/sdk/lib/stores/protokitBalances";
+import { useMinaBridge } from "@zknoid/sdk/lib/hooks/observe-protokit-balance";
 import { client } from "zknoid-chain-dev";
 import { useNetworkStore } from "@zknoid/sdk/lib/stores/network";
 // import { type PendingTransaction } from '@proto-kit/sequencer';
