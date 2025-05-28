@@ -3,135 +3,27 @@ import path from 'path';
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { withSentryConfig } from '@sentry/nextjs';
-// import ImageMinimizerPlugin from "image-minimizer-webpack-plugin";
+import CopyWebpackPlugin from 'copy-webpack-plugin';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**',
-      },
-    ],
-  },
+  // ————————————————————————————————
+  // 1) Make sure you never opt into Turbopack in prod!
+  //    Just use the default webpack build (`next build`).
+  // ————————————————————————————————
 
-  async headers() {
-    return [
-      {
-        source: '/(.*)',
-        headers: [
-          { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
-          { key: 'Cross-Origin-Embedder-Policy', value: 'require-corp' },
-        ],
-      },
-    ];
-  },
-
-  experimental: {
-    turbopack: false,
-  },
-
-  webpack(config, { isServer }) {
-    if (!isServer) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        o1js: path.resolve(__dirname, 'node_modules/o1js/dist/web/index.js'),
-      };
-    }
-
-    config.experiments = {
-      ...config.experiments,
-      topLevelAwait: true,
-      asyncWebAssembly: true,
-    };
-
-    config.module.rules.push({
-      test: /\.wasm$/i,
-      type: 'webassembly/async',
-    });
-
-    return {
-      ...config,
-      // module: {
-      //   ...config.module,
-      //   rules: [
-      //     ...config.module.rules,
-      //     {
-      //       test: /\.(svg)$/i,
-      //       type: "asset",
-      //     },
-      //   ],
-      // },
-      optimization: {
-        minimize: true,
-        minimizer: [
-          new TerserPlugin({
-            minify: TerserPlugin.swcMinify,
-            terserOptions: {
-              sourceMap: false,
-              compress: {
-                keep_classnames: true,
-                keep_fnames: true,
-              },
-              mangle: {
-                keep_classnames: true,
-                keep_fnames: true,
-              },
-            },
-            exclude: /node_modules/,
-          }),
-          // new ImageMinimizerPlugin({
-          //   minimizer: {
-          //     implementation: ImageMinimizerPlugin.svgoMinify,
-          //     options: {
-          //       plugins: [
-          //         "svgo",
-          //         {
-          //           plugins: [
-          //             {
-          //               name: "preset-default",
-          //               params: {
-          //                 overrides: {
-          //                   removeViewBox: false,
-          //                   addAttributesToSVGElement: {
-          //                     params: {
-          //                       attributes: [
-          //                         { xmlns: "http://www.w3.org/2000/svg" },
-          //                       ],
-          //                     },
-          //                   },
-          //                 },
-          //               },
-          //             },
-          //           ]
-          //         }
-          //       ]
-          //     }
-          //   },
-          // }),
-        ],
-      },
-    };
-  },
-  eslint: {
-    dirs: ['app', 'components', 'constants', 'containers', 'games', 'lib'],
-  },
-  experimental: {
-    reactCompiler: true,
-    optimizePackageImports: ['@zknoid/sdk', '@zknoid/games', 'zknoid-chain-dev'],
-  },
-  productionBrowserSourceMaps: false,
-  transpilePackages: ['@zknoid/sdk', '@zknoid/games', 'zknoid-chain-dev'],
+  // ————————————————————————————————
+  // 2) Merge your images block (remove the placeholder ** rule,
+  //    only list the hosts you actually need).
+  // ————————————————————————————————
   images: {
     remotePatterns: [
       {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
-        port: '',
         pathname: '/dw4kivbv0/image/upload/**',
       },
       {
@@ -145,45 +37,98 @@ const nextConfig = {
       },
     ],
   },
+
+  // ————————————————————————————————
+  // 3) Experimental flags: only the ones you actually need go here
+  //    (for Next.js 15, reactCompiler is a top-level flag if you really want it;
+  //     most people don’t need to touch it).
+  // ————————————————————————————————
+  experimental: {
+    optimizePackageImports: ['@zknoid/sdk', '@zknoid/games', 'zknoid-chain-dev'],
+  },
+
+  // ————————————————————————————————
+  // 4) Your Webpack override: alias + wasm + top-level await
+  // ————————————————————————————————
+  webpack(config, { isServer }) {
+    if (!isServer) {
+      // 1️⃣ alias o1js to its browser bundle
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        o1js: path.resolve(__dirname, 'node_modules/o1js/dist/web/index.js'),
+      };
+
+      // 2️⃣ make sure .wasm is resolvable without an explicit extension
+      config.resolve.extensions = [...(config.resolve.extensions || []), '.wasm'];
+
+      // 3️⃣ tell webpack to copy o1js’s .wasm out as a static resource
+      config.module.rules.push({
+        test: /\.wasm$/i,
+        include: path.resolve(__dirname, 'node_modules/o1js/dist/web'),
+        type: 'asset/resource',
+        generator: {
+          // match o1js’s runtime fetch: /_next/static/wasm/o1.wasm
+          filename: 'static/wasm/[name][ext]',
+        },
+      });
+
+      // 4️⃣ ALSO push CopyWebpackPlugin *in case* some files aren’t
+      //    referenced via URL imports at build-time:
+      config.plugins.push(
+        new CopyWebpackPlugin({
+          patterns: [
+            {
+              from: path.resolve(__dirname, 'node_modules/o1js/dist/web/web_bindings/*.wasm'),
+              to: 'static/wasm/[name][ext]',
+            },
+          ],
+        })
+      );
+    }
+
+    // you can drop asyncWebAssembly/topLevelAwait if you're not
+    // actually using the `import foo from "./foo.wasm"` form,
+    // but it won’t hurt to leave it in:
+    config.experiments = {
+      ...config.experiments,
+      asyncWebAssembly: true,
+      topLevelAwait: true,
+    };
+
+    return {
+      ...config,
+      optimization: {
+        minimize: true,
+        minimizer: [
+          new TerserPlugin({
+            minify: TerserPlugin.swcMinify,
+            terserOptions: {
+              compress: { keep_classnames: true, keep_fnames: true },
+              mangle: { keep_classnames: true, keep_fnames: true },
+            },
+            exclude: /node_modules/,
+          }),
+        ],
+      },
+    };
+  },
+
+  eslint: {
+    dirs: ['app', 'components', 'constants', 'containers', 'games', 'lib'],
+  },
+  productionBrowserSourceMaps: false,
+  transpilePackages: ['@zknoid/sdk', '@zknoid/games', 'zknoid-chain-dev'],
 };
 
 export default withSentryConfig(nextConfig, {
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options
-
   org: 'zknoid-2z',
   project: 'javascript-nextjs',
-
-  // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
-
-  // For all available options, see:
-  // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
-
-  // Upload a larger set of source maps for prettier stack traces (increases build time)
   widenClientFileUpload: true,
-
-  // Automatically annotate React components to show their full name in breadcrumbs and session replay
-  reactComponentAnnotation: {
-    enabled: true,
-  },
-
-  // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
-  // This can increase your server load as well as your hosting bill.
-  // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
-  // side errors will fail.
+  reactComponentAnnotation: { enabled: true },
   tunnelRoute: '/monitoring',
-
-  // Hides source maps from generated client bundles
   hideSourceMaps: true,
-
-  // Automatically tree-shake Sentry logger statements to reduce bundle size
   disableLogger: true,
-
-  // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
-  // See the following for more information:
-  // https://docs.sentry.io/product/crons/
-  // https://vercel.com/docs/cron-jobs
   automaticVercelMonitors: true,
   sourcemaps: {
     disable: true,
